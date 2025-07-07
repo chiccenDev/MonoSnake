@@ -179,9 +179,9 @@ namespace MonoSnake.Core
         {
             string snakePos = $"Snake Position: {player.Position}";
             string tailCount = $"Tails: {tails.Count}";
-            spriteBatch.DrawString(hudFont, snakePos, new Vector2(16, 16), Color.White);
+            //spriteBatch.DrawString(hudFont, snakePos, new Vector2(16, 16), Color.White);
             spriteBatch.DrawString(hudFont, tailCount, new Vector2(16, hudFont.MeasureString(snakePos).Y + 16), Color.White);
-            spriteBatch.DrawString(hudFont, $"Tail Tiles: {tails.Keys.ToString()}", new Vector2(16, hudFont.MeasureString(snakePos).Y + hudFont.MeasureString(tailCount).Y + 16), Color.White);
+            //spriteBatch.DrawString(hudFont, $"Tail Tiles: {tails.Keys.ToString()}", new Vector2(16, hudFont.MeasureString(snakePos).Y + hudFont.MeasureString(tailCount).Y + 16), Color.White);
         }
 
         private void DrawShadowedString(SpriteBatch spriteBatch, SpriteFont font, string value, Vector2 position, Color color)

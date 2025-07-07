@@ -103,13 +103,13 @@ namespace MonoSnake.Core
 
             // Move cursor with keyboard arrow keys
             if (CurrentKeyboardState.IsKeyDown(Keys.Up))
-                currentCursorLocation.Y -= deltaTime * cursorMoveSpeed;
+                //currentCursorLocation.Y -= deltaTime * cursorMoveSpeed;
             if (CurrentKeyboardState.IsKeyDown(Keys.Down))
-                currentCursorLocation.Y += deltaTime * cursorMoveSpeed;
+                //currentCursorLocation.Y += deltaTime * cursorMoveSpeed;
             if (CurrentKeyboardState.IsKeyDown(Keys.Left))
-                currentCursorLocation.X -= deltaTime * cursorMoveSpeed;
+                //currentCursorLocation.X -= deltaTime * cursorMoveSpeed;
             if (CurrentKeyboardState.IsKeyDown(Keys.Right))
-                currentCursorLocation.X += deltaTime * cursorMoveSpeed;
+                //currentCursorLocation.X += deltaTime * cursorMoveSpeed;
 
             currentCursorLocation.X = MathHelper.Clamp(currentCursorLocation.X, 0f, viewport.Width);
             currentCursorLocation.Y = MathHelper.Clamp(currentCursorLocation.Y, 0f, viewport.Height);

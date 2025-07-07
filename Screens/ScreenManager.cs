@@ -31,6 +31,7 @@ namespace MonoSnake.Screens
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private Texture2D blankTexture;
+        private Texture2D blankSquare;
 
         private bool isInitialized;
         private bool traceEnabled;
@@ -93,6 +94,7 @@ namespace MonoSnake.Screens
                 spriteBatch = new SpriteBatch(GraphicsDevice);
                 font = content.Load<SpriteFont>("Fonts/Hud");
                 blankTexture = content.Load<Texture2D>("Sprites/blank");
+                blankSquare = content.Load<Texture2D>("Sprites/blankSquare");
 
 
                 foreach (GameScreen screen in screens)
@@ -181,7 +183,7 @@ namespace MonoSnake.Screens
                 Rectangle rect = new((int)mouse.X, (int)mouse.Y, 16, 16);
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, globalTransformation);
-                spriteBatch.Draw(blankTexture, rect, null, Color.Red);
+                spriteBatch.Draw(blankSquare, rect, null, Color.Red);
                 spriteBatch.End();
             }
         }

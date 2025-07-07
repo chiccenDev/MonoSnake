@@ -188,8 +188,8 @@ namespace MonoSnake.Core
             tail?.Update();
             CheckFruit();
 
-            Debug.WriteLine($"Snake: {position}");
-            Debug.WriteLine($"Tail: {tail?.Position}");
+            //Debug.WriteLine($"Snake: {position}");
+            //Debug.WriteLine($"Tail: {tail?.Position}");
         }
 
         /// <summary>
