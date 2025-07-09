@@ -94,7 +94,7 @@ namespace MonoSnake.Screens
                 spriteBatch = new SpriteBatch(GraphicsDevice);
                 font = content.Load<SpriteFont>("Fonts/Hud");
                 blankTexture = content.Load<Texture2D>("Sprites/blank");
-                blankSquare = content.Load<Texture2D>("Sprites/blankSquare");
+                blankSquare = content.Load<Texture2D>("UI/blankSquare");
 
 
                 foreach (GameScreen screen in screens)
@@ -172,8 +172,11 @@ namespace MonoSnake.Screens
             //Game.GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
             foreach (var screen in screens)
             {
+                /*
                 if (screen.ScreenState != ScreenState.Hidden) 
                     screen.Draw(gameTime);
+                */
+                screen.Draw(gameTime);
             }
             
             if (cursorDebug)

@@ -86,7 +86,7 @@ namespace MonoSnake.Screens
 
             SetLanguageText();
 
-            gradientTexture = content.Load<Texture2D>("Sprites/gradient");
+            gradientTexture = content.Load<Texture2D>("UI/gradient");
         }
 
         /// <summary>

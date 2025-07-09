@@ -17,8 +17,6 @@ namespace MonoSnake.Screens
         private readonly TimeSpan toastDuration;
         private TimeSpan toastTimer;
         private Vector2 messageTextPosition;
-        private Vector2 yesTextSize;
-        private Vector2 noTextSize;
 
         /// <summary>
         /// Event raised when the user accepts the message box.
@@ -74,7 +72,7 @@ namespace MonoSnake.Screens
         {
             ContentManager content = ScreenManager.Game.Content;
 
-            gradientTexture = content.Load<Texture2D>("Sprites/gradient");
+            gradientTexture = content.Load<Texture2D>("UI/gradient");
         }
 
         /// <summary>
@@ -140,10 +138,6 @@ namespace MonoSnake.Screens
             // The GlobalTransformation will scale everything for us.
             Vector2 textSize = ScreenManager.Font.MeasureString(message);
             messageTextPosition = (ScreenManager.BaseScreenSize - textSize) / 2;
-
-            // Done here because language setting could change dynamically. Possibly overkill?
-            yesTextSize = ScreenManager.Font.MeasureString("Yes");
-            noTextSize = ScreenManager.Font.MeasureString("No");
         }
 
         /// <summary>
