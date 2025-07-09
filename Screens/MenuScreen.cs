@@ -17,7 +17,14 @@ namespace MonoSnake.Screens
         private string menuTitle;
         // Default color is black. Use new Color(192, 192, 192) for off-white.
         private Color menuTitleColor = Color.White;
-        private Texture2D background;
+        public Texture2D background;
+        private Rectangle backgroundRectangle = Rectangle.Empty;
+
+        // The background includes a border somewhat larger than the text itself.
+        private const int hPad = 32;
+        private const int vPad = 16;
+
+        private MenuEntry longestEntry;
 
         /// <summary>
         /// Gets or sets the title of the menu screen.
@@ -40,6 +47,7 @@ namespace MonoSnake.Screens
         public MenuScreen(string menuTitle)
         {
             this.menuTitle = menuTitle;
+            selectedEntry = 0;
 
             TransitionOnTime = TimeSpan.FromSeconds(0.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
@@ -51,7 +59,7 @@ namespace MonoSnake.Screens
         /// </summary>
         public override void LoadContent()
         {
-            background = ScreenManager.Game.Content.Load<Texture2D>("Backgrounds/Layer0_2");
+            background = ScreenManager.Game.Content.Load<Texture2D>("UI/menuPixel");
 
             base.LoadContent();
         }
@@ -73,6 +81,7 @@ namespace MonoSnake.Screens
                     TextSelectedCheck(inputState.CurrentCursorLocation);
                 else if (inputState.IsMiddleMouseButtonClick())
                     OnSelectEntry(selectedEntry, PlayerIndex.One);
+                else { TextHoveredCheck(inputState.CurrentCursorLocation); }
             }
 
             //Move to the previous menu entry.
@@ -119,12 +128,31 @@ namespace MonoSnake.Screens
             for (int i = 0; i < menuEntries.Count; i++)
             {
                 var textSize = ScreenManager.Font.MeasureString(menuEntries[i].Text);
-                var entryBounds = new Rectangle((int)menuEntries[i].Position.X, (int)menuEntries[i].Position.Y, (int)textSize.X, (int)textSize.Y);
+                var entryBounds = new Rectangle((int)menuEntries[i].Position.X, (int)menuEntries[i].Position.Y - (int)(textSize.Y / 2), (int)textSize.X, (int)textSize.Y);
 
                 if (entryBounds.Contains(touchLocation))
                 {
                     selectedEntry = i;
                     OnSelectEntry(selectedEntry);
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if the mouse is hovering over a menu entry.
+        /// </summary>
+        /// <param name="touchLocation">The location where the mouse is hovering.</param>
+        private void TextHoveredCheck(Vector2 mouseLocation)
+        {
+            for (int i = 0; i < menuEntries.Count; i++)
+            {
+                var textSize = ScreenManager.Font.MeasureString(menuEntries[i].Text);
+                var entryBounds = new Rectangle((int)menuEntries[i].Position.X, (int)menuEntries[i].Position.Y - (int)(textSize.Y / 2), (int)textSize.X, (int)textSize.Y);
+
+                if (entryBounds.Contains(mouseLocation))
+                {
+                    selectedEntry = i;
                     break;
                 }
             }
@@ -185,12 +213,15 @@ namespace MonoSnake.Screens
             float transitionOffset = (float)Math.Pow(TransitionPosition, 2);
 
             // Start at Y = 175; each X value is generated per entry.
-            Vector2 position = new Vector2(0f, 175f);
+            Vector2 position = new Vector2(0f, ScreenManager.BaseScreenSize.Y * 0.375f); // 3/8 from the top of the screen
 
             // Update each menu entry's location in turn.
             for (int i = 0; i < menuEntries.Count; i++)
             {
                 MenuEntry menuEntry = menuEntries[i];
+
+                if (longestEntry == null || menuEntry.Text.Length > longestEntry.Text.Length)
+                    longestEntry = menuEntry;
 
                 // Each entry is to be centered horizontally.
                 position.X = ScreenManager.BaseScreenSize.X / 2 - menuEntry.GetWidth(this) / 2;
@@ -244,9 +275,43 @@ namespace MonoSnake.Screens
 
             //spriteBatch.Draw(background, Vector2.Zero, Color.White);
 
+            // Make the menu slide into place during transitions, using a
+            // power curve to make things look more interesting (this makes
+            // the movement slow down as it nears the end).
+            float transitionOffset = (float)Math.Pow(TransitionPosition, 2);
+
+            // Get menu title information for centering on screen.
+            Vector2 titlePosition = new Vector2(ScreenManager.BaseScreenSize.X / 2, ScreenManager.BaseScreenSize.Y / 5);
+            Vector2 titleOrigin = font.MeasureString(menuTitle) / 2;
+            Color titleColor = menuTitleColor * TransitionAlpha;
+            float titleScale = 1.25f;
+
+            if (this.IsPopup)
+            {
+                if (backgroundRectangle.IsEmpty)
+                {
+                    // Center the message text in the BaseScreenSize.
+                    // The GlobalTransformation will scale everything for us.
+                    Vector2 textSize = ScreenManager.Font.MeasureString(longestEntry.Text);
+                    var yOffset = menuEntries[0].Position.Y - titlePosition.Y;
+                    var xOffset = titlePosition.X - (ScreenManager.BaseScreenSize.X / 2 - longestEntry.GetWidth(this) / 2);
+                    textSize.Y += (textSize.Y * MenuEntries.Count) + yOffset;
+                    var messageTextPosition = (ScreenManager.BaseScreenSize - textSize) / 2;
+
+                    backgroundRectangle = new Rectangle((int)titlePosition.X - hPad - (int)xOffset,
+                                                    (int)titlePosition.Y - vPad - (int)(yOffset / 4),
+                                                    (int)textSize.X + hPad * 2,
+                                                    (int)textSize.Y + vPad * 2);
+                }
+
+                spriteBatch.Draw(background, backgroundRectangle, Color.White * TransitionAlpha);
+            }
+            
+
             // Draw each menu entry in turn.
             for (int i = 0; i < menuEntries.Count; i++)
             {
+
                 MenuEntry menuEntry = menuEntries[i];
 
                 bool isSelected = IsActive && (i == selectedEntry);
@@ -254,17 +319,7 @@ namespace MonoSnake.Screens
                 menuEntry.Draw(this, isSelected, gameTime);
             }
 
-            // Make the menu slide into place during transitions, using a
-            // power curve to make things look more interesting (this makes
-            // the movement slow down as it nears the end).
-            float transitionOffset = (float)Math.Pow(TransitionPosition, 2);
-
-            // Draw the menu title centered on the screen.
-            Vector2 titlePosition = new Vector2(ScreenManager.BaseScreenSize.X / 2, 80);
-            Vector2 titleOrigin = font.MeasureString(menuTitle) / 2;
-            Color titleColor = menuTitleColor * TransitionAlpha;
-            float titleScale = 1.25f;
-
+            // Draw menu title using information collected above, including transition offset for transitions on and off screen.
             titlePosition.Y -= transitionOffset * 100;
 
             spriteBatch.DrawString(font, menuTitle, titlePosition, titleColor, 0, titleOrigin, titleScale, SpriteEffects.None, 0);
