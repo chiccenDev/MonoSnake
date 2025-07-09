@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoSnake.Screens
 {
@@ -9,12 +10,16 @@ namespace MonoSnake.Screens
     /// </summary>
     internal class PauseScreen : MenuScreen
     {
+        private Rectangle backgroundRectangle;
+
         /// <summary>
         /// Initialized a new instance of the <see cref="PauseScreen"/> class.
         /// </summary>
         public PauseScreen()
             : base("Paused")
         {
+            this.IsPopup = true;
+
             // Create our menu entries.
             MenuEntry resumeGameMenuEntry = new MenuEntry("Resume");
             MenuEntry quitGameMenuEntry = new MenuEntry("Quit");
