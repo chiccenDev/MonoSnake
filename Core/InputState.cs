@@ -38,6 +38,18 @@ namespace MonoSnake.Core
         /// </summary>
         public Vector2 LastCursorLocation => currentCursorLocation;
 
+        private Vector2 currentClickLocation;
+        /// <summary>
+        /// Current location being clicked.
+        /// </summary>
+        public Vector2 CurrentClickLocation => currentClickLocation;
+
+        private Vector2 lastClickLocation;
+        /// <summary>
+        /// Last location that was clicked.
+        /// </summary>
+        public Vector2 LastClickLocation => lastClickLocation;
+
         private bool isMouseWheelScrollDown;
         /// <summary>
         /// Has the user scrolled the mouse wheel down?
@@ -74,11 +86,15 @@ namespace MonoSnake.Core
             LastMouseState = CurrentMouseState;
             CurrentMouseState = Mouse.GetState();
 
+            // Update mouse location
+            lastCursorLocation = currentCursorLocation;
+            currentCursorLocation = transformCursorLocation(new Vector2(CurrentMouseState.X, CurrentMouseState.Y));
+
             if (IsLeftMouseButtonClicked())
             {
-                lastCursorLocation = currentCursorLocation;
+                lastClickLocation = currentClickLocation;
                 // Transform mouse position to game coordinates
-                currentCursorLocation = transformCursorLocation(new Vector2(CurrentMouseState.X, CurrentMouseState.Y));
+                currentClickLocation = transformCursorLocation(currentCursorLocation);
                 //touchCount = 1;
             }
             if (IsMiddleMouseButtonClick())
